@@ -1,11 +1,25 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import { getCollection } from 'astro:content';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const allArticles = await getCollection("articles");
+
+const orderedArticles = allArticles.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
 ---
 
 <Layout>
-	<Welcome />
+  <Header />
+  <ul>
+    {orderedArticles.map((article) => (
+      <li>
+        <a href={`/articles/${article.data.slug}`}>
+          <b>{article.data.date.toLocaleDateString('pt-BR')}</b>
+          <h2>{article.data.title}</h2>
+        </a>
+      </li>
+    ))}
+  </ul>
 </Layout>

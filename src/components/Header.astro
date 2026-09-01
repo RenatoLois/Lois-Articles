@@ -1,0 +1,192 @@
+<header>
+  <div class="left">
+    <a href="/" class="logo"><h2>Renato Lóis</h2></a>
+  </div>
+  <div class="right">
+    <button id="toggle-menu" class="toggle-menu">
+      <i id="hamburger-icon" class="fa-solid fa-bars"></i>
+    </button>
+    <nav id="nav-menu">
+      <ul>
+        <li><a href="/">Início</a></li>
+        <li><a href="/about">Sobre</a></li>
+        <li><a href="https://github.com/RenatoLois">Github</a></li>
+      </ul>
+    </nav>
+    <button id="theme-btn" class="theme-btn">
+      <i class="fa-solid fa-circle-half-stroke"></i>
+    </button>
+  </div>
+</header>
+
+<style>
+  @import '../styles/colors.css';
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    background: var(--bg-block);
+    border-bottom: 1px solid var(--border);
+    color: var(--text-main);
+    box-shadow: var(--shadow);
+    position: relative; /* ← ESSENCIAL: referência para o menu absoluto */
+  }
+
+  .logo h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-main);
+    text-decoration: none;
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .theme-btn,
+  .toggle-menu {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-main);
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+  }
+
+  .theme-btn:hover,
+  .toggle-menu:hover {
+    background: var(--bg-alternative);
+    transform: scale(1.05);
+  }
+
+  nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1rem;
+  }
+
+  nav a {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  nav a:hover {
+    color: var(--primary);
+  }
+
+  @media (max-width: 700px) {
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav {
+      position: absolute;           /* ← AGORA ABSOLUTO */
+      top: calc(100% + 0.5rem);     /* ← LOGO ABAIXO DO HEADER + ESPAÇO */
+      right: -100%;
+      width: 70%;
+      max-width: 280px;
+      background: var(--bg-block);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 2rem 1.5rem;
+      transition: right 0.3s ease;
+      box-shadow: var(--shadow);
+      z-index: 999;
+      /* Altura automática conforme o conteúdo */
+    }
+
+    nav.nav-active {
+      right: 0;
+    }
+
+    nav ul {
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .toggle-menu {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 701px) {
+    .toggle-menu {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function toggleMenu() {
+    const navMenu = document.getElementById('nav-menu');
+    const icon = document.getElementById('hamburger-icon');
+    const toggleBtn = document.getElementById('toggle-menu');
+
+    if (!navMenu || !icon || !toggleBtn) return;
+
+    navMenu.classList.toggle('nav-active');
+
+    if (navMenu.classList.contains('nav-active')) {
+      icon.className = 'fa-solid fa-xmark';
+      toggleBtn.setAttribute('aria-label', 'Fechar menu');
+    } else {
+      icon.className = 'fa-solid fa-bars';
+      toggleBtn.setAttribute('aria-label', 'Abrir menu');
+    }
+  }
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    html.classList.toggle('dark');
+    const newTheme = html.classList.contains('dark') ? 'dark' : 'light';
+    localStorage.setItem('theme', newTheme);
+  }
+
+  const storedTheme = localStorage.getItem('theme');
+  if (storedTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else if (storedTheme === 'light') {
+    document.documentElement.classList.remove('dark');
+  } else {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) document.documentElement.classList.add('dark');
+  }
+
+  const toggleBtn = document.getElementById('toggle-menu');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', toggleMenu);
+  }
+
+  const themeBtn = document.getElementById('theme-btn');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', toggleTheme);
+  }
+
+  const navMenu = document.getElementById('nav-menu');
+  if (navMenu) {
+    navMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (navMenu.classList.contains('nav-active')) {
+          toggleMenu();
+        }
+      });
+    });
+  }
+</script>
